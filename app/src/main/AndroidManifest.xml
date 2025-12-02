@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permission required for checking App Link status -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppLinkTesting">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppLinkTesting">
+
+            <!-- 1. STANDARD LAUNCHER FILTER (Keeps app icon visible) -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- 2. ANDROID APP LINK FILTER (Primary Intercept for SES Redirect) -->
+            <!-- Requires assetlinks.json verification on your live HTTPS domain -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https"
+                    android:host="app.yourdomain.com"
+                    android:pathPrefix="/auth" />
+                <!-- !!! IMPORTANT: Replace 'app.yourdomain.com' with your actual HTTPS domain !!! -->
+            </intent-filter>
+
+            <!-- 3. CUSTOM URI SCHEME FILTER (Fallback for auth.html Manual Button) -->
+            <!-- Used by your JavaScript: window.location.href = "yourappscheme://auth?..." -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Scheme must match the APP_SCHEME constant in auth.html -->
+                <data android:scheme="yourappscheme" android:host="auth" />
+            </intent-filter>
+
+        </activity>
+    </application>
+
+</manifest>
